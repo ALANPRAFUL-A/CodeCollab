@@ -12,7 +12,10 @@ import { setupEditorSocket } from "./sockets/editorSocket.js";
 import authRoutes from "./routes/authRoutes.js";
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: ["http://localhost:5173", "https://code-collab-five-blond.vercel.app"],
+  credentials: true
+}));
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
@@ -20,7 +23,10 @@ app.use("/api/auth", authRoutes);
 const server = http.createServer(app);
 
 const io = new Server(server, {
-  cors: { origin: "*" },
+  cors: {
+    origin: ["http://localhost:5173", "https://code-collab-five-blond.vercel.app"],
+    methods: ["GET", "POST"]
+  },
 });
 
 // 🔥 Connect DB
