@@ -29,10 +29,10 @@ const io = new Server(server, {
   },
 });
 
-// 🔥 Connect DB
+
 await connectDB();
 
-// 🔥 Setup sockets
+
 setupEditorSocket(io);
 
 server.listen(5000, () => {
