@@ -19,5 +19,8 @@
     "mongoose": "^9.4.1",
     "socket.io": "^4.8.3",
     "yjs": "^13.6.30"
+  },
+  "overrides": {
+    "engine.io": "6.6.7"
   }
 }
