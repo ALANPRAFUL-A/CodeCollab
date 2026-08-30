@@ -4,16 +4,11 @@ import User from '../models/User.js';
 
 const router = express.Router();
 
-// Generate JWT Helper
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || 'fallback_secret', {
     expiresIn: '30d',
   });
 };
-
-// @desc    Register a new user
-// @route   POST /api/auth/register
-// @access  Public
 router.post('/register', async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -45,9 +40,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// @desc    Authenticate a user
-// @route   POST /api/auth/login
-// @access  Public
+
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
