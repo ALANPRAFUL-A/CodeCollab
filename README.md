@@ -105,10 +105,45 @@ npm run dev
 
 ---
 
+---
+
+## Running with Docker (full production-style stack)
+
+The repository also ships a containerised stack that runs three load-balanced
+backend replicas behind a reverse proxy, with a controlled egress path:
+
+```
+browser -> nginx reverse proxy -> HAProxy (least connections + sticky sessions)
+             -> backend-1 / backend-2 / backend-3 -> MongoDB + Redis
+                                                  -> Squid forward proxy -> internet
+```
+
+```bash
+cd CodeCollab
+cp .env.example .env        # then fill in the CHANGE_ME values
+docker compose up -d --build
+```
+
+| | |
+|---|---|
+| App | <http://localhost:8080> |
+| Load balancer dashboard | <http://localhost:8404> |
+| Health | <http://localhost:8080/health> |
+
+Full walkthrough, per-layer explanation and troubleshooting:
+**[DOCKER_INFRA_GUIDE.md](./DOCKER_INFRA_GUIDE.md)**
+
+Note that running more than one backend replica requires Redis (`REDIS_URL`),
+which the Compose stack provides. Without it the server falls back to
+single-instance mode and replicas cannot share editing sessions.
+
+---
+
 ## Deployment
 
 - Frontend can be deployed on Vercel or Netlify
 - Backend can be deployed on Render
+- Or deploy the whole stack with Docker Compose (see the guide above)
 - Ensure environment variables are configured in deployment platforms
 
 ---

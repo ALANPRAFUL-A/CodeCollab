@@ -1,0 +1,23 @@
+# Everything here is excluded from the build context. Without this, Docker would
+# upload the entire local node_modules tree (hundreds of MB) on every build and
+# then the COPY would overwrite the platform-correct modules installed by `npm ci`.
+node_modules
+npm-debug.log*
+
+# Secrets must never be baked into an image layer. Supply them at runtime via
+# docker-compose `environment:` / `env_file:` instead.
+.env
+.env.*
+!.env.example
+
+# Not needed at runtime
+Dockerfile
+.dockerignore
+.git
+.gitignore
+*.md
+coverage
+.nyc_output
+.vscode
+.idea
+.DS_Store

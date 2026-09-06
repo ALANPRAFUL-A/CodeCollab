@@ -1,0 +1,21 @@
+node_modules
+npm-debug.log*
+
+# dist is rebuilt inside the image. Copying a local build in would let a stale
+# bundle (possibly built with a different VITE_API_URL) shadow the fresh one.
+dist
+dist-ssr
+
+.env
+.env.*
+!.env.example
+
+Dockerfile
+.dockerignore
+.git
+.gitignore
+*.md
+*.local
+.vscode
+.idea
+.DS_Store

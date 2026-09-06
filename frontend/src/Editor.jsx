@@ -4,11 +4,11 @@ import * as Y from "yjs";
 import { MonacoBinding } from "y-monaco";
 import * as awarenessProtocol from "y-protocols/awareness";
 import { io } from "socket.io-client";
+import { SOCKET_URL, SOCKET_OPTIONS } from "./config";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import { LogOut, Link as LinkIcon, Check, Play } from "lucide-react";
 import { useState } from "react";
-import axios from "axios";
 
 const colors = ["#ef4444", "#f59e0b", "#10b981", "#3b82f6", "#8b5cf6", "#ec4899"];
 
@@ -126,12 +126,25 @@ const CodeEditor = () => {
       if (styleEl) styleEl.innerHTML = cssRules;
     });
 
-    const SOCKET_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? "https://codecollab-ds87.onrender.com" : "http://localhost:5000");
-    const socket = io(SOCKET_URL);
+    // SOCKET_URL is undefined by default => connect to the same origin that
+    // served this page, i.e. through the nginx reverse proxy -> HAProxy -> backend.
+    const socket = io(SOCKET_URL, SOCKET_OPTIONS);
     socketRef.current = socket;
 
+    // Re-emitted on every reconnect, which matters here: if a backend replica
+    // dies, HAProxy hands us a different one and we must re-join the room there.
     socket.on("connect", () => {
       socket.emit("join_room", roomId);
+    });
+
+    // Tells us which backend replica this tab is pinned to. Open the console and
+    // compare two tabs to see the load balancer at work.
+    socket.on("server-info", ({ instanceId }) => {
+      console.info(`[codecollab] socket ${socket.id} served by ${instanceId}`);
+    });
+
+    socket.on("room-error", ({ message }) => {
+      console.error(`[codecollab] room error: ${message}`);
     });
 
     // Receive doc updates from server

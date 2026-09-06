@@ -1,0 +1,40 @@
+# =============================================================================
+# EGRESS ALLOWLIST for the Squid forward proxy
+# =============================================================================
+# Referenced by squid.conf via:  acl allowed_domains dstdomain "<this file>"
+#
+# Anything NOT listed here is refused with 403 and logged as TCP_DENIED.
+#
+# Syntax:
+#   example.com    matches ONLY example.com
+#   .example.com   matches example.com AND every subdomain of it
+#
+# One entry per line. Blank lines and lines starting with # are ignored.
+# After editing:  docker compose restart forward-proxy
+# =============================================================================
+
+# --- Used by GET /api/egress-test to prove the proxy path works ---
+api.github.com
+
+# --- Package registries -------------------------------------------------------
+# Only needed if you install packages from inside a running container. Normal
+# image builds happen on the host and do not go through this proxy.
+#
+# `.npmjs.org` already covers registry.npmjs.org and every other subdomain.
+# Listing both makes Squid warn about a redundant entry, so don't.
+.npmjs.org
+
+# --- Web fonts ----------------------------------------------------------------
+# NOTE: frontend/src/index.css does `@import url('https://fonts.googleapis.com/...')`.
+# That request is made by the USER'S BROWSER, not by a container, so it does not
+# actually traverse this proxy. Listed here only so that server-side rendering or
+# a future asset-prefetch step would work.
+fonts.googleapis.com
+fonts.gstatic.com
+
+# =============================================================================
+# Add your own outbound dependencies below, e.g.:
+#   api.openai.com
+#   .sentry.io
+#   hooks.slack.com
+# =============================================================================
